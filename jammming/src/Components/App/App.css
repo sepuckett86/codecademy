@@ -28,7 +28,7 @@ h2 {
 
 .App {
   height: 100%;
-  padding: 0 17% 0% 17%;
+  padding: 0 17% 10% 17%;
   background-image: url('./background_photo_desktop.jpg');
   background-size: cover;
   background-position: center;
@@ -42,7 +42,6 @@ h2 {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  margin-bottom: 10%;
 }
 
 @media only screen and (max-width: 1020px) {
@@ -50,9 +49,4 @@ h2 {
     align-items: center;
     flex-direction: column;
   }
-}
-
-::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
 }
