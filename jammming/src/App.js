@@ -8,17 +8,17 @@ class App extends Component {
   render() {
     return (
       <div>
-      <div className="App">
         <header className="App-header">
           <h1>Ja<span className="highlight">mmm</span>ing</h1>
         </header>
-        <SearchBar />
-        <div className="App-playlist">
-          <Results />
-          <Playlist />
+        <div className="App">
+          <SearchBar />
+          <div className="App-playlist">
+            <Results />
+            <Playlist />
+          </div>
         </div>
       </div>
-    </div>
     );
   }
 }
