@@ -17,7 +17,7 @@ class Playlist extends React.Component {
       <div className="Playlist">
         <input
           onChange={this.handleNameChange}
-          placeholder='New Playlist'/>
+          value={this.props.playlistName}/>
 
         <TrackList
          tracks={this.props.playlistTracks}

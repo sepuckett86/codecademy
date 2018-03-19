@@ -34,6 +34,7 @@ class App extends React.Component {
       this.setState({
         playlistTracks: playlistTracksHere
        });
+    console.log(this.state.playlistTracks);
     }
     }
 
@@ -56,14 +57,13 @@ class App extends React.Component {
     this.setState({
       playlistName: name
     })
-    console.log(this.state.playlistName);
+    
   }
 
 
   savePlaylist() {
-    let uris = [];
-    this.state.playlistTracks.forEach(track => uris.push(track.uri));
-    Spotify.savePlaylist(this.state.name, uris);
+    let uris = this.state.playlistTracks.map(track => track.uri);
+    Spotify.savePlaylist(this.state.playlistName, uris);
     this.setState({
       playlistName: 'New Playlist',
       playlistTracks: []
