@@ -12,6 +12,7 @@ class App extends React.Component {
       searchResults: [],
       playlistName: 'User Playlist',
       playlistTracks: [],
+      playing: 'none'
     }
 
     this.addTrack = this.addTrack.bind(this);
@@ -19,6 +20,7 @@ class App extends React.Component {
     this.updatePlaylistName = this.updatePlaylistName.bind(this);
     this.savePlaylist = this.savePlaylist.bind(this);
     this.search = this.search.bind(this);
+    this.isPlaying = this.isPlaying.bind(this);
   }
 
   addTrack(track) {
@@ -34,7 +36,7 @@ class App extends React.Component {
       this.setState({
         playlistTracks: playlistTracksHere
        });
-    console.log(this.state.playlistTracks);
+    
     }
     }
 
@@ -57,7 +59,7 @@ class App extends React.Component {
     this.setState({
       playlistName: name
     })
-    
+
   }
 
 
@@ -76,6 +78,12 @@ class App extends React.Component {
     })
   }
 
+  isPlaying(id) {
+    this.setState({
+      playing: id
+    })
+  }
+
   render() {
     return (
       <div>
@@ -89,6 +97,9 @@ class App extends React.Component {
             <SearchResults
               searchResults={this.state.searchResults}
               onAdd={this.addTrack}
+              playing={this.state.playing}
+              isPlaying={this.isPlaying}
+
              />
             <Playlist
               playlistName={this.state.playlistName}
@@ -96,6 +107,9 @@ class App extends React.Component {
               onRemove={this.removeTrack}
               onNameChange={this.updatePlaylistName}
               onSave={this.savePlaylist}
+              playing={this.state.playing}
+              isPlaying={this.isPlaying}
+
               />
           </div>
         </div>
