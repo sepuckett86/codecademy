@@ -30,8 +30,8 @@ class SearchBar extends React.Component {
       return '';
   }
 
-  handleSortByChange(sortByOption) {
-    this.setState({sortBy: sortByOption});
+  handleSortByChange(event) {
+    this.setState({ sortBy: event.target.getAttribute('value')});
   }
 
   handleTermChange(event) {
@@ -53,6 +53,7 @@ class SearchBar extends React.Component {
       let sortByOptionValue = this.sortByOptions[sortByOption];
       return (<li className={this.getSortByClass(sortByOptionValue)}
                   key={sortByOptionValue}
+                  value={sortByOptionValue}
                   onClick={this.handleSortByChange}>
                 {sortByOption}
              </li>);
