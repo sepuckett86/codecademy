@@ -2,7 +2,9 @@
 let database = {
   users: {},
   articles: {},
-  nextArticleId: 1
+  comments: {},
+  nextArticleId: 1,
+  nextCommentId: 1
 };
 
 const routes = {
@@ -26,6 +28,19 @@ const routes = {
   },
   '/articles/:id/downvote': {
     'PUT': downvoteArticle
+  },
+  '/comments': {
+    'POST': createComment
+  },
+  '/comments/:id': {
+    'PUT': updateComment,
+    'DELETE': deleteComment
+  },
+  '/comments/:id/upvote': {
+    'PUT': upvoteComment
+  },
+  '/comments/:id/downvote': {
+    'PUT': downvoteComment
   }
 };
 
@@ -240,6 +255,134 @@ function downvote(item, username) {
   return item;
 }
 
+// Declare function to create comment accepting url and request
+function createComment(url, request) {
+  // ? Why does this equal two things?
+  const requestComment = request.body && request.body.comment;
+  // Declare response object that will be updated and retured at end of function
+  const response = {};
+
+  if (requestComment && requestComment.body && database.users[requestComment.username] &&
+      requestComment.articleId && requestComment.username && database.articles[requestComment.articleId]) {
+    // All comment information
+    const comment = {
+      // Note how ++ can be a part of object declaration
+      id: database.nextCommentId++,
+      body: requestComment.body,
+      username: requestComment.username,
+      articleId: requestComment.articleId,
+      upvotedBy: [],
+      downvotedBy: []
+    };
+
+    // Add comment to database with ID as key and whole comment object as value
+    database.comments[comment.id] = comment;
+    // Add comment ID to user that wrote it in database
+    database.users[comment.username].commentIds.push(comment.id);
+    // Add comment ID to article's comment IDs in database
+    database.articles[comment.articleId].commentIds.push(comment.id);
+
+    // Update response body with comment
+    response.body = {comment: comment};
+    // Set response status to CREATED
+    response.status = 201;
+  } else {
+    // Set response status to BAD REQUEST
+    response.status = 400;
+  }
+  return response;
+}
+
+// Declare function that receives comment ID from URL parameter and updates comment from comment property of request body
+function updateComment(url, request) {
+  // Declare id by splitting url into array and filtering for the index 1 item in array
+  const id = Number(url.split('/').filter(segment => segment)[1]);
+  // Declare savedComment by returning comment from database by id
+  const savedComment = database.comments[id];
+  // Declare requestComment that stores request argument data
+  const requestComment = request.body && request.body.comment;
+  // Declare response object that will be updated and retured at end of function
+  const response = {};
+  // If no ID or updated comment is supplied, returns 200 response
+  if (!id || !requestComment || !requestComment.body) {
+    // Set response status to BAD REQUEST
+    response.status = 400;
+  // If comment with given ID does not exist, returns 404 response
+  } else if (!savedComment) {
+    // Set response status to NOT FOUND
+    response.status = 404;
+  } else {
+    savedComment.body = requestComment.body;
+    // Set response body to new comment
+    response.body = {comment: savedComment};
+    response.status = 200;
+  }
+
+  return response;
+}
+
+function deleteComment(url, request) {
+  const id = Number(url.split('/').filter(segment => segment)[1]);
+  const savedComment = database.comments[id];
+  const response = {};
+
+  if (savedComment) {
+    // Remove comment from database
+    database.comments[id] = null;
+    // Remove comment id from username in database
+    // ? How does splicing userCommentIds also splice the database?
+    const userCommentIds = database.users[savedComment.username].commentIds;
+    userCommentIds.splice(userCommentIds.indexOf(id), 1);
+    // Remove comment from article comment IDS in database
+    const articleCommentIds = database.articles[savedComment.articleId].commentIds;
+    articleCommentIds.splice(articleCommentIds.indexOf(id), 1);
+    response.status = 204;
+  } else {
+    response.status = 404;
+  }
+
+  return response;
+}
+
+function upvoteComment(url, request) {
+  const id = Number(url.split('/').filter(segment => segment)[1]);
+  const username = request.body && request.body.username;
+  let savedComment = database.comments[id];
+  const response = {};
+
+  if (savedComment && database.users[username]) {
+    // Call upvote function
+    // ? Does this also change database?
+    savedComment = upvote(savedComment, username);
+    // Update upvoted comment in response
+    response.body = {comment: savedComment};
+    response.status = 200;
+  } else {
+    response.status = 400;
+  }
+
+  return response;
+}
+
+function downvoteComment(url, request) {
+  const id = Number(url.split('/').filter(segment => segment)[1]);
+  const username = request.body && request.body.username;
+  let savedComment = database.comments[id];
+  const response = {};
+
+  if (savedComment && database.users[username]) {
+    // Call downvote function
+    savedComment = downvote(savedComment, username);
+
+    response.body = {comment: savedComment};
+    response.status = 200;
+  } else {
+    response.status = 400;
+  }
+
+  return response;
+}
+
 // Write all code above this line.
 
 const http = require('http');
@@ -328,3 +471,8 @@ server.listen(port, (err) => {
 
   console.log(`Server is listening on ${port}`);
 });
+
+
+// Things I learned:
+// 1) need to include url and request as arguments even if you do not use url in function
+//
