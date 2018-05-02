@@ -7,6 +7,37 @@ let database = {
   nextCommentId: 1
 };
 
+
+function loadDatabase() {
+  // Enable JS-YAML and file loading and saving
+  yaml = require('js-yaml');
+  fs   = require('fs');
+
+  try {
+    let mydatabase = yaml.safeLoad(fs.readFileSync('./database.yml', 'utf8'));
+    database = mydatabase;
+    return mydatabase;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+function saveDatabase() {
+  // Enable JS-YAML and file loading and saving
+  yaml = require('js-yaml');
+  fs   = require('fs');
+
+  // Convert JS database object to JSON
+  const jsonDatabase = JSON.stringify(database);
+  // Write JSON object to database.yml
+  fs.writeFile("./database.yml", jsonDatabase, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+    console.log("The file was saved!");
+});
+}
+
 const routes = {
   '/users': {
     'POST': getOrCreateUser
@@ -407,7 +438,8 @@ const requestHandler = (request, response) => {
     return response.end();
   }
 
-  response.setHeader('Access-Control-Allow-Origin', null);
+  // Note: I changed null to "*" in the next line to prevent an error
+  response.setHeader('Access-Control-Allow-Origin', "*");
   response.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   response.setHeader(
       'Access-Control-Allow-Headers', 'X-Requested-With,content-type');
@@ -471,7 +503,6 @@ server.listen(port, (err) => {
 
   console.log(`Server is listening on ${port}`);
 });
-
 
 // Things I learned:
 // 1) need to include url and request as arguments even if you do not use url in function
