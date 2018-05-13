@@ -59,9 +59,11 @@ minionsRouter.get('/:minionId', (req, res, next) => {
   } else {
     res.status(404).send('Minion does not exist');
   }
-})
+});
 
-/* Get a single expression
+/* EXAMPLE
+Get a single expression
+
 expressionsRouter.get('/:id', (req, res, next) => {
   const foundExpression = getElementById(req.params.id, expressions);
   if (foundExpression) {
@@ -79,7 +81,72 @@ const getElementById = (id, elementList) => {
 */
 
 // PUT /api/minions/:minionId to update a single minion by id.
+minionsRouter.put('/:minionId', (req, res, next) => {
+  // Determine whether minion exists
+  let id = req.params.minionId;
+  // Declare new minion data
+  let newData = req.body;
+  const foundMinion = getFromDatabaseById('minions', id);
+  if (foundMinion) {
+    const updatedMinion = updateInstanceInDatabase('minions', newData);
+    if (updatedMinion) {
+      res.send(updatedMinion);
+    } else {
+      res.status(404).send('Minion could not be updated');
+    }
+  } else {
+    res.status(404).send('Minion does not exist');
+  }
+});
+
+/*
+// Update an expression
+expressionsRouter.put('/:id', (req, res, next) => {
+  const expressionIndex = getIndexById(req.params.id, expressions);
+  if (expressionIndex !== -1) {
+    updateElement(req.params.id, req.query, expressions);
+    res.send(expressions[expressionIndex]);
+  } else {
+    res.status(404).send();
+  }
+});
+
+const getIndexById = (id, elementList) => {
+  return elementList.findIndex((element) => {
+    return element.id === Number(id);
+  });
+};
+
+const updateElement = (id, queryArguments, elementList) => {
+  const elementIndex = getIndexById(id, elementList);
+  if (elementIndex === -1) {
+    throw new Error('updateElement must be called with a valid id parameter');
+  }
+  if (queryArguments.id) {
+    queryArguments.id = Number(queryArguments.id);
+  }
+  Object.assign(elementList[elementIndex], queryArguments);
+  return elementList[elementIndex];
+};
+*/
+
 // DELETE /api/minions/:minionId to delete a single minion by id.
+minionsRouter.delete('/:minionId', (req, res, next) => {
+  // Determine whether minion exists
+  let id = req.params.minionId;
+  const dataCheck = getFromDatabaseById('minions', id);
+  if (dataCheck !== -1) {
+    const deleteCheck = deleteFromDatabasebyId('minions', id);
+    if (deleteCheck) {
+      res.status(204).send();
+    } else {
+      res.status(404).send();
+    }
+  } else {
+    res.status(404).send();
+  }
+})
+
 
 
 module.exports = minionsRouter;
