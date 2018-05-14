@@ -48,7 +48,6 @@ minionsRouter.post('/', (req, res, next) => {
 
 // GET /api/minions/:minionId to get a single minion by id.
 minionsRouter.get('/:minionId', (req, res, next) => {
-
   let id = req.params.minionId;
   // Get minion by id from minion array
   const foundMinion = minions.find((minion) => {
