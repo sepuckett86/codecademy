@@ -68,7 +68,6 @@ ideasRouter.get('/:ideaId', (req, res, next) => {
 
 
 // PUT /api/ideas/:ideaId to update a single idea by id.
-// Add checkMillionDollarIdea middleware
 ideasRouter.put('/:ideaId', (req, res, next) => {
   // Determine whether idea exists
   const id = req.params.ideaId;
@@ -76,6 +75,7 @@ ideasRouter.put('/:ideaId', (req, res, next) => {
   const newData = req.body;
   const foundIdea = getFromDatabaseById('ideas', id);
   if (foundIdea) {
+    // Call checkMillionDollarIdea middleware here to allow for valid id check first
     checkMillionDollarIdea(req, res, next);
     const updatedIdea = updateInstanceInDatabase('ideas', newData);
     if (updatedIdea) {

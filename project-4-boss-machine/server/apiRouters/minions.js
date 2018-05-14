@@ -37,7 +37,7 @@ minionsRouter.post('/', (req, res, next) => {
   // Convert salary from a string to number
   newMinion.salary = Number(newMinion.salary);
   // Check whether salary is a number (if it's not something like this: "aaa")
-  if (typeof newMinion.salary == 'number') {
+  if (typeof newMinion.salary === 'number') {
     const addedMinionWithId = addToDatabase('minions', newMinion);
     res.status(201).send(addedMinionWithId);
   } else {
@@ -97,6 +97,49 @@ minionsRouter.delete('/:minionId', (req, res, next) => {
   }
 })
 
+// BONUS
+
+// Middleware to check whether minion is valid by ID
+minionsRouter.use('/:minionId/work', (req, res, next) => {
+  const minionId = Number(req.params.minionId);
+  // Check if minionId is a number
+  if (typeof minionId === 'number') {
+    // Check if minion in database
+    const foundMinion = minions.find((minion) => {
+      return minion.id === String(minionId);
+    })
+    if (foundMinion !== undefined) {
+      next();
+      } else {
+        res.status(404).send('Minion does not exist');
+      }
+    } else {
+    res.status(404).send('Minion ID not valid');
+    }
+});
+
+// GET /api/minions/:minionId/work to get an array of all work for the specified minon.
+minionsRouter.get('/:minionId/work', (req, res, next) => {
+  const minionId = req.params.minionId;
+  const allWork = getAllFromDatabase('work');
+  const minionWork = [];
+  allWork.forEach(work => {
+    if (work.minionId === minionId) {
+      minionWork.push(work);
+    }
+  })
+  if (minionWork) {
+    res.send(minionWork);
+    } else {
+      res.status(404).send('No work');
+    }
+})
+
+// POST /api/minions/:minionId/work to create a new work object and save it to the database.
+
+// PUT /api/minions/:minionId/work/:workId to update a single work by id.
+
+// DELETE /api/minions/:minionId/work/:workId to delete a single work by id.
 
 
 module.exports = minionsRouter;
