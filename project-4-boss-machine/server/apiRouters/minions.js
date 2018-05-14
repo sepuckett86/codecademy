@@ -61,25 +61,6 @@ minionsRouter.get('/:minionId', (req, res, next) => {
   }
 });
 
-/* EXAMPLE
-Get a single expression
-
-expressionsRouter.get('/:id', (req, res, next) => {
-  const foundExpression = getElementById(req.params.id, expressions);
-  if (foundExpression) {
-    res.send(foundExpression);
-  } else {
-    res.status(404).send();
-  }
-});
-
-const getElementById = (id, elementList) => {
-  return elementList.find((element) => {
-    return element.id === Number(id);
-  });
-};
-*/
-
 // PUT /api/minions/:minionId to update a single minion by id.
 minionsRouter.put('/:minionId', (req, res, next) => {
   // Determine whether minion exists
@@ -99,36 +80,6 @@ minionsRouter.put('/:minionId', (req, res, next) => {
   }
 });
 
-/*
-// Update an expression
-expressionsRouter.put('/:id', (req, res, next) => {
-  const expressionIndex = getIndexById(req.params.id, expressions);
-  if (expressionIndex !== -1) {
-    updateElement(req.params.id, req.query, expressions);
-    res.send(expressions[expressionIndex]);
-  } else {
-    res.status(404).send();
-  }
-});
-
-const getIndexById = (id, elementList) => {
-  return elementList.findIndex((element) => {
-    return element.id === Number(id);
-  });
-};
-
-const updateElement = (id, queryArguments, elementList) => {
-  const elementIndex = getIndexById(id, elementList);
-  if (elementIndex === -1) {
-    throw new Error('updateElement must be called with a valid id parameter');
-  }
-  if (queryArguments.id) {
-    queryArguments.id = Number(queryArguments.id);
-  }
-  Object.assign(elementList[elementIndex], queryArguments);
-  return elementList[elementIndex];
-};
-*/
 
 // DELETE /api/minions/:minionId to delete a single minion by id.
 minionsRouter.delete('/:minionId', (req, res, next) => {
