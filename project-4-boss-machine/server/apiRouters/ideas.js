@@ -10,6 +10,9 @@ updateInstanceInDatabase,
 deleteFromDatabasebyId,
 deleteAllFromDatabase } = require('../db');
 
+// Require checkMillionDollarIdea
+const checkMillionDollarIdea = require('../checkMillionDollarIdea');
+
 // Get ideas data from database
 let ideas = getAllFromDatabase('ideas');
 
@@ -23,7 +26,8 @@ ideasRouter.get('/', (req, res, next) => {
 });
 
 // POST /api/ideas to create a new idea and save it to the database.
-ideasRouter.post('/', (req, res, next) => {
+// Add checkMillionDollarIdea middleware
+ideasRouter.post('/', checkMillionDollarIdea, (req, res, next) => {
   // Use req.body, not req.query, to find posted information. Because of bodyParser?
   const queryArguments = req.body;
   // Declare newIdea object. id is unnecessary because id is
@@ -64,13 +68,15 @@ ideasRouter.get('/:ideaId', (req, res, next) => {
 
 
 // PUT /api/ideas/:ideaId to update a single idea by id.
+// Add checkMillionDollarIdea middleware
 ideasRouter.put('/:ideaId', (req, res, next) => {
   // Determine whether idea exists
-  let id = req.params.ideaId;
+  const id = req.params.ideaId;
   // Declare new idea data
-  let newData = req.body;
+  const newData = req.body;
   const foundIdea = getFromDatabaseById('ideas', id);
   if (foundIdea) {
+    checkMillionDollarIdea(req, res, next);
     const updatedIdea = updateInstanceInDatabase('ideas', newData);
     if (updatedIdea) {
       res.send(updatedIdea);
