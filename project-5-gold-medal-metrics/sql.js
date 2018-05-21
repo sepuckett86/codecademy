@@ -24,7 +24,8 @@ Returns a SQL query string that will find the number of gold medals for the give
 */
 
 const goldMedalNumber = country => {
-    return;
+  const query = `SELECT COUNT(*) AS 'count' FROM GoldMedal WHERE country = "${country}";`;
+    return query;
 };
 
 /*
@@ -33,7 +34,8 @@ won the most summer medals, along with the number of medals aliased to 'count'.
 */
 
 const mostSummerWins = country => {
-  return;
+  const query = `SELECT year, COUNT(*) AS 'count' FROM GoldMedal WHERE country = "${country}" AND season = "Summer" GROUP BY year;`;
+  return query;
 };
 
 /*
@@ -42,7 +44,7 @@ won the most winter medals, along with the number of medals aliased to 'count'.
 */
 
 const mostWinterWins = country => {
-  return;
+  return `SELECT year, COUNT(*) AS 'count' FROM GoldMedal WHERE country = "${country}" AND season = "Winter" GROUP BY year;`;
 };
 
 /*
@@ -51,7 +53,7 @@ won the most medals, along with the number of medals aliased to 'count'.
 */
 
 const bestYear = country => {
-  return;
+  return `SELECT year, COUNT(*) AS 'count' FROM GoldMedal WHERE country = "${country}" GROUP BY year ORDER BY COUNT(*) DESC LIMIT 1;`;
 };
 
 /*
@@ -60,7 +62,7 @@ won the most medals, along with the number of medals aliased to 'count'.
 */
 
 const bestDiscipline = country => {
-  return;
+  return `SELECT discipline, COUNT(*) AS 'count' FROM GoldMedal WHERE country = "${country}" GROUP BY discipline;`;
 };
 
 /*
