@@ -71,7 +71,7 @@ won the most medals, along with the number of medals aliased to 'count'.
 */
 
 const bestSport = country => {
-  return;
+  return `SELECT sport, COUNT(*) AS 'count' FROM GoldMedal WHERE country = "${country}" GROUP BY sport ORDER BY COUNT(*) DESC LIMIT 1;`;
 };
 
 /*
@@ -80,7 +80,7 @@ won the most medals, along with the number of medals aliased to 'count'.
 */
 
 const bestEvent = country => {
-  return;
+  return `SELECT event, COUNT(*) AS 'count' FROM GoldMedal WHERE country = "${country}" GROUP BY event ORDER BY COUNT(*) DESC LIMIT 1;`;
 };
 
 /*
@@ -88,7 +88,7 @@ Returns a SQL query string that will find the number of male medalists.
 */
 
 const numberMenMedalists = country => {
-  return;
+  return `SELECT COUNT(DISTINCT name) FROM GoldMedal WHERE country = "${country}" AND gender = "Men";`;
 };
 
 /*
@@ -96,7 +96,7 @@ Returns a SQL query string that will find the number of female medalists.
 */
 
 const numberWomenMedalists = country => {
-  return;
+  return `SELECT COUNT(DISTINCT name) FROM GoldMedal WHERE country = "${country}" AND gender = "Women"`;
 };
 
 /*
@@ -104,7 +104,7 @@ Returns a SQL query string that will find the athlete with the most medals.
 */
 
 const mostMedaledAthlete = country => {
-  return;
+  return `SELECT name FROM GoldMedal WHERE country = "${country}" GROUP BY name ORDER BY COUNT(*) DESC LIMIT 1 ;`;
 };
 
 /*
@@ -113,7 +113,15 @@ optionally ordered by the given field in the specified direction.
 */
 
 const orderedMedals = (country, field, sortAscending) => {
-  return;
+  let query = '';
+  if (field && sortAscending === true) {
+    query = `SELECT * FROM GoldMedal WHERE country = "${country}" ORDER BY ${field} ASC;`
+  } else if (field && sortAscending === false){
+    query = `SELECT * FROM GoldMedal WHERE country = "${country}" ORDER BY ${field} DESC;`
+  } else {
+    query = `SELECT * FROM GoldMedal WHERE country = "${country}";`
+  }
+  return query;
 };
 
 /*
@@ -124,7 +132,15 @@ aliased as 'percent'. Optionally ordered by the given field in the specified dir
 */
 
 const orderedSports = (country, field, sortAscending) => {
-  return;
+  let query = '';
+  if (field && sortAscending === true) {
+    query = `SELECT sport, COUNT(*) AS 'count', COUNT(sport)*100/(SELECT COUNT(*) FROM GoldMedal WHERE country = "${country}") AS 'percent' FROM GoldMedal WHERE country = "${country}" GROUP BY sport ORDER BY ${field} ASC;`
+  } else if (field && sortAscending === false) {
+    query = `SELECT sport, COUNT(*) AS 'count', COUNT(sport)*100/(SELECT COUNT(*) FROM GoldMedal WHERE country = "${country}") AS 'percent' FROM GoldMedal WHERE country = "${country}" GROUP BY sport ORDER BY ${field} DESC;`
+  } else {
+    query = `SELECT sport, COUNT(*) AS 'count', COUNT(sport)*100/(SELECT COUNT(*) FROM GoldMedal WHERE country = "${country}") AS 'percent' FROM GoldMedal WHERE country = "${country}" GROUP BY sport;`
+  }
+  return query;
 };
 
 module.exports = {
