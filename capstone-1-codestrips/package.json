@@ -1,0 +1,17 @@
+{
+  "name": "capstone-1-codestrips",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "codecademy and Susan Puckett",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.3",
+    "morgan": "^1.9.0",
+    "sqlite3": "^4.0.0"
+  }
+}
