@@ -10,12 +10,13 @@
   "license": "ISC",
   "dependencies": {
     "chai": "^4.1.2",
+    "express": "^4.16.3",
     "mocha": "^3.5.0",
     "random-flat-colors": "^1.0.4",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-router-dom": "^4.2.2",
-    "sqlite3": "^3.1.9",
+    "sqlite3": "^3.1.13",
     "supertest": "^3.0.0",
     "whatwg-fetch": "^2.0.3"
   },
