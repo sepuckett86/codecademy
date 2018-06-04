@@ -188,4 +188,108 @@ employeesRouter.post('/:employeeId/timesheets', (req, res, next) => {
   }
 })
 
+employeesRouter.put('/:employeeId/timesheets/:timesheetId', (req, res, next) => {
+  const updatedTimesheet = req.body.timesheet;
+  const id = req.params.timesheetId;
+  const employeeId = req.params.employeeId;
+  // Check for timesheet id
+  db.get('SELECT * FROM Timesheet WHERE id = $id', {
+    $id: id
+  }, function(error, row) {
+    if (error || !row) {
+      res.status(404).send();
+    } else {
+      // Check for valid updated timesheet info
+      if(!updatedTimesheet.hours || !updatedTimesheet.rate || !updatedTimesheet.date) {
+        return res.status(400).send();
+      } else {
+        // Check for employee id
+        db.get('SELECT * FROM Employee WHERE Employee.id = $id', {
+          $id: employeeId
+        }, function(error, row){
+          if (error || !row) {
+            return res.status(404).send();
+          } else {
+            db.serialize(function() {
+              db.run('UPDATE Timesheet SET hours = $hours WHERE id = $id', {
+                $hours: updatedTimesheet.hours,
+                $id: id
+              }, function(error) {
+                if (error) {
+                  next(error);
+                  return;
+                }
+              });
+              db.run('UPDATE Timesheet SET rate = $rate WHERE id = $id', {
+                $rate: updatedTimesheet.rate,
+                $id: id
+              }, function(error) {
+                if (error) {
+                  next(error);
+                }
+              });
+              db.run('UPDATE Timesheet SET date = $date WHERE id = $id', {
+                $date: updatedTimesheet.date,
+                $id: id
+              }, function(error) {
+                if (error) {
+                  next(error);
+                }
+              });
+              db.run('UPDATE Timesheet SET employee_id = $employee_id WHERE id = $id', {
+                $employee_id: employeeId,
+                $id: id
+              }, function(error) {
+                if (error) {
+                  next(error);
+                }
+              });
+              db.get('SELECT * FROM Timesheet WHERE id = $id', {
+                $id: id
+              }, function(error, row) {
+                if (error || !row) {
+                  res.status(404).send();
+                } else {
+                  res.status(200).send({timesheet: row});
+                }
+              });
+            });
+          }
+        }
+        )
+      }
+    }
+  })
+});
+
+employeesRouter.delete('/:employeeId/timesheets/:timesheetId', (req, res, next) => {
+  const employeeId = req.params.employeeId;
+  const timesheetId = req.params.timesheetId;
+  db.get('SELECT * FROM Timesheet WHERE id = $id', {
+    $id: timesheetId
+  }, function(error, row) {
+    if (error || !row) {
+      return res.status(404).send();
+    } else {
+      db.run('DELETE FROM Timesheet WHERE Timesheet.id = $id', {
+        $id: timesheetId
+      }, function(error, row) {
+        if (error) {
+          next(error);
+        } else {
+          db.get(`SELECT * FROM Timesheet WHERE Timesheet.id = $id`, {
+            $id: timesheetId
+          },
+            function(error, employee){
+              if (!employee) {
+                res.status(204).send();
+              }
+            });
+        }
+      })
+    }
+  })
+
+})
+
 module.exports = employeesRouter;
