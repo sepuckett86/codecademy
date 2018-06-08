@@ -29,7 +29,8 @@ function saveDatabase() {
 
   // Convert JS database object to JSON
   const jsonDatabase = JSON.stringify(database);
-  // Write JSON object to database.yml
+
+  // Write YAML object to database.yml
   fs.writeFile("./database.yml", jsonDatabase, function(err) {
     if(err) {
         return console.log(err);
